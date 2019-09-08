@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>chatapp</title>
+    <style>
+        #wrapper {
+            width: 700px;
+            margin: 0 auto;
+            border: 1px solid #000;
+            font-family: "Trebuchet MS";
+            font-size: 14px;
+        }
+        .hidden {
+            display: none;
+        }
+        .sent-msg {
+            width: 80%;
+            float: right;
+        }
+        .received-msg {
+            width: 80%;
+            float: left;
+        }
+        .message .container {
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius:10px;
+            margin: 5px 10px;
+        }
+        .sent-msg .time {
+            float: right;
+        }
+        .received-msg .time {
+            float: left;
+        }
+        .message .time {
+            font-size: 9px;
+            margin: 0 10px;
+        }
+        .message .container .img {
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .message .container .img img {
+            width:100%;
+            height:100%;
+            border-radius: 50%;
+        }
+        .message .container .content {
+            display: inline-block;
+            padding-left: 10px;
+            width: calc(100% - 50px);
+        }
+
+    </style>
+</head>
+<body>
+<div id="wrapper">
+
+    <div id="user-container">
+
+        <input type="text" id="name" name="name" placeholder="Name" required>
+        <br />
+        <input type="email" id="email" name="email" placeholder="Email" required>
+        <br />
+        <button type="button" id="join-chat">Join Chat</button>
+    </div>
+
+    <div id="chat-container" class="hidden">
+
+        <button type="button" id="leave-room">Leave Chat</button>
+
+        <div id="messages"></div>
+
+        <div id="msg-container">
+            <input type="text" id="msg" name="msg">
+            <button type="button" id="send-msg">Send</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.12.0/js/md5.min.js" integrity="sha256-1K9nK/DlS1HHfbB3SmJz2qRfsW5Tgg/yimRBOHLmwk0=" crossorigin="anonymous"></script>
+<script type="application/javascript" src="js/imap.js"></script>
+<script>
+  (function(){
+
+    const sent = function (payload) {
+      return `<div class="sent-msg message">
+                <div class="container">
+                    <div class="content">${payload.msg}</div>
+                    <div class="img"><img src="${payload.image}"></div>
+                </div>
+                <b class="time">${payload.time}</b>
+            </div>`
+    };
+
+    const received = function (payload) {
+      return `<div class="received-msg message">
+                <div class="container">
+                    <div class="img"><img src="${payload.image}"></div>
+                    <div class="content">${payload.msg}</div>
+                </div>
+                <b class="time">${payload.time}</b>
+            </div>`
+    };
+
+    const onLocalJoin = function (payload) {
+      return  `<div style="text-align: center">You Joined room ass ${payload.name}.</div>`;
+    };
+
+    const onClientJoin = function (payload) {
+      return `<div style="text-align: center">${payload.name} Joined the chat.</div>`
+    };
+
+    const mutateAddImageAndTime = function (payload) {
+      payload.image = `https://www.gravatar.com/avatar/${md5(payload.email)}/?d=retro`;
+      payload.time  = (new Date()).toLocaleTimeString();
+
+      return payload;
+    };
+
+
+
+    document.getElementById('join-chat').addEventListener('click', function () {
+
+      const name  = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+
+      if (! name || ! email) {
+        alert('Name and Email is required');
+        return;
+      }
+
+      document.querySelector('#user-container').classList.toggle('hidden');
+      document.querySelector('#chat-container').classList.toggle('hidden');
+
+      const imap = new ImapChat({name, email}, '#messages', '#msg', '#send-msg', onLocalJoin, onClientJoin, sent, received);
+
+      imap.setMutateBeforeSend(mutateAddImageAndTime);
+      imap.setMutateOnReceive(mutateAddImageAndTime);
+
+      imap.run();
+    });
+
+
+
+  })();
+
+
+
+</script>
+
+
+
+</body>
+</html>
