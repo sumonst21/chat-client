@@ -54,14 +54,33 @@
             padding-left: 10px;
             width: calc(100% - 50px);
         }
-
+        #messages {
+            height:380px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            border-bottom: 1px solid #ddd;
+        }
+        .chat-msg-action {
+            padding: 5px;
+        }
+        .chat-msg-action textarea {
+            width: 90%;
+            border: none;
+            background: #efefef;
+            padding: 5px;
+        }
+        .chat-msg-action button {
+            height: 60px;
+            vertical-align: top;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
 <div id="wrapper">
 
     <div id="user-container">
-
         <input type="text" id="name" name="name" placeholder="Name" required>
         <br />
         <input type="email" id="email" name="email" placeholder="Email" required>
@@ -75,8 +94,8 @@
 
         <div id="messages"></div>
 
-        <div id="msg-container">
-            <input type="text" id="msg" name="msg">
+        <div id="msg-container" class="chat-msg-action">
+            <textarea id="msg" name="msg"></textarea>
             <button type="button" id="send-msg">Send</button>
         </div>
     </div>
@@ -109,7 +128,7 @@
     };
 
     const onLocalJoin = function (payload) {
-      return  `<div style="text-align: center">You Joined room ass ${payload.name}.</div>`;
+      return `<div style="text-align: center">You Joined room ass ${payload.name}.</div>`;
     };
 
     const onClientJoin = function (payload) {
@@ -122,8 +141,6 @@
 
       return payload;
     };
-
-
 
     document.getElementById('join-chat').addEventListener('click', function () {
 
@@ -138,15 +155,20 @@
       document.querySelector('#user-container').classList.toggle('hidden');
       document.querySelector('#chat-container').classList.toggle('hidden');
 
-      const imap = new ImapChat({name, email}, '#messages', '#msg', '#send-msg', onLocalJoin, onClientJoin, sent, received);
+      new ImapChat({
+        instanceData: {name: 'foo', email: 'foo@bar,com'},
+        messageContainerId: '#messages',
+        inputID: '#msg',
+        sendButtonId: '#send-msg',
+        onLocalJoin: onLocalJoin,
+        onClientJoin: onClientJoin,
+        sendTPL: sent,
+        receiveTPL: received,
+        mutateBeforeSend: mutateAddImageAndTime,
+        mutateOnReceive: mutateAddImageAndTime
+      }).run(false);
 
-      imap.setMutateBeforeSend(mutateAddImageAndTime);
-      imap.setMutateOnReceive(mutateAddImageAndTime);
-
-      imap.run();
     });
-
-
 
   })();
 

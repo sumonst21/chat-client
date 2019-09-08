@@ -1,39 +1,45 @@
-class ImapChat {
+class ImapChat
+{
   /**
    * Class constructor.
    *
-   * @param {object} instanceData
-   * @param {string} messageContainerId
-   * @param {string} inputId
-   * @param {string} sendButtonId
-   * @param {function} onLocalJoin
-   * @param {function} onClientJoin
-   * @param {function} sendTPL
-   * @param {function} receiveTPL
-   * @param {function} mutateBeforeSend
-   * @param {function} mutateOnReceive
+   * @param {object} obj
+   * @param {string} websocketHost
+   *
+   * $obj properties.
+   * {object} instanceData
+   * {string} messageContainerId
+   * {string} inputId
+   * {string} sendButtonId
+   * {function} onLocalJoin
+   * {function} onClientJoin
+   * {function} sendTPL
+   * {function} receiveTPL
+   * {function} mutateBeforeSend
+   * {function} mutateOnReceive
    */
-  constructor(instanceData = null, messageContainerId = null, inputId = null, sendButtonId = null, onLocalJoin = null, onClientJoin = null, sendTPL = null, receiveTPL = null, mutateBeforeSend = null, mutateOnReceive = null) {
-    this.instanceData       = instanceData;
-    this.messageContainerId = messageContainerId;
-    this.inputID            = inputId;
-    this.sendButtonId       = sendButtonId;
-    this.onLocalJoin        = onLocalJoin || (() => '');
-    this.onClientJoin       = onClientJoin || (() => '');
-    this.sendTPL            = sendTPL;
-    this.receiveTPL         = receiveTPL;
-    this.mutateBeforeSend   = mutateBeforeSend || (e => e);
-    this.mutateOnReceive    = mutateOnReceive || (e => e);
+  constructor(obj, websocketHost = 'ws://localhost:8080?') {
+    this.instanceData       = obj.instanceData;
+    this.messageContainerId = obj.messageContainerId;
+    this.inputID            = obj.inputID;
+    this.sendButtonId       = obj.sendButtonId;
+    this.onLocalJoin        = obj.onLocalJoin || (() => '');
+    this.onClientJoin       = obj.onClientJoin || (() => '');
+    this.sendTPL            = obj.sendTPL;
+    this.receiveTPL         = obj.receiveTPL;
+    this.mutateBeforeSend   = obj.mutateBeforeSend || (e => e);
+    this.mutateOnReceive    = obj.mutateOnReceive || (e => e);
     this.initIdentifier     = 'INITIAL_SOCK_INSTANCE';
+    this.websocketHost      = websocketHost;
   }
 
   /**
    * Sets initial object for current client
    * @Example {name: 'foo', email: 'foo@bar.com'}
-   * @param {object} object
+   * @param {object} obj
    */
-  setInstanceData(object) {
-    this.instanceData = object
+  setInstanceData(obj) {
+    this.instanceData = obj
   }
 
   /**
@@ -121,35 +127,40 @@ class ImapChat {
 
   /**
    * Eval
+   * @param {boolean} sandbox If set to true, a chat prototype is rendered.
    */
-  run()
+  run(sandbox)
   {
     const panel = document.querySelector(this.messageContainerId);
     const input = document.querySelector(this.inputID);
     const send  = document.querySelector(this.sendButtonId);
 
     if (! panel)  {
-      throw new Error(`Message Container. Couldn't find element with ID:"${this.messageContainerId}"`);
+      throw new Error(`Message Container[messageContainerId]. Couldn't find element with ID:"${this.messageContainerId}"`);
     }
 
     if (! this.onLocalJoin) {
-      throw new Error('onJoin callback not specified.');
+      throw new Error('onJoin callback not specified[onLocalJoin].');
     }
 
     if (! this.sendTPL) {
-      throw new Error('Sent message template callback not specified.');
+      throw new Error('Sent message template callback not specified[sendTPL].');
     }
 
     if (! this.receiveTPL) {
-      throw new Error('Received message template callback not specified.');
+      throw new Error('Received message template callback not specified[receiveTPL].');
     }
 
     if (! input) {
-      throw new Error(`Message Input. Couldn't find element with ID:"${this.inputID}"`);
+      throw new Error(`Message Input[inputID]. Couldn't find element with ID:"${this.inputID}"`);
+    }
+
+    if (sandbox) {
+      return this.buildDev(panel);
     }
 
     const params = Object.assign({[this.initIdentifier]: true}, this.instanceData);
-    const conn   = new WebSocket('ws://localhost:8080?' + JSON.stringify(params));
+    const conn   = new WebSocket(this.websocketHost + JSON.stringify(params));
 
     conn.onmessage = e => {
       const data = JSON.parse(e.data);
@@ -161,7 +172,7 @@ class ImapChat {
     };
 
     if (! send) {
-      throw new Error(`Send message button. Couldn't find element with ID:"${this.sendButtonId}"`);
+      throw new Error(`Send message button[sendButtonId]. Couldn't find element with ID:"${this.sendButtonId}"`);
     } else  {
       send.addEventListener('click', () => {
         const message = input.value;
@@ -175,7 +186,33 @@ class ImapChat {
         panel.innerHTML += this.sendTPL(this.mutateBeforeSend(this.instanceData));
       });
     }
+
     panel.innerHTML = this.onLocalJoin(this.instanceData);
+  }
+
+  /**
+   * Sets up UI for development.
+   * @param panel
+   */
+  buildDev(panel)
+  {
+    const clientEmail = this.instanceData.email;
+    panel.innerHTML = '<hr />';
+    panel.innerHTML += this.onLocalJoin(this.instanceData);
+    panel.innerHTML += this.onClientJoin(this.instanceData);
+    this.instanceData.msg = 'Hello Foo!';
+    panel.innerHTML += this.sendTPL(this.mutateBeforeSend(this.instanceData));
+    this.instanceData.msg = 'Hi Bar!';
+    this.instanceData.email = 'bar@foo.com';
+    panel.innerHTML += this.receiveTPL(this.mutateOnReceive(this.instanceData));
+    this.instanceData.msg = 'How are you';
+    this.instanceData.email = clientEmail;
+    panel.innerHTML += this.sendTPL(this.mutateBeforeSend(this.instanceData));
+    this.instanceData.msg = 'doing okay!';
+    this.instanceData.email = 'bar@foo.com';
+    panel.innerHTML += this.receiveTPL(this.mutateOnReceive(this.instanceData));
+    this.instanceData.msg = 'you?';
+    panel.innerHTML += this.receiveTPL(this.mutateOnReceive(this.instanceData));
   }
 
 }
