@@ -13,7 +13,7 @@ php socket.php
  
 ## Documentation
 HTML code sample (This will be reference the the documentation below)
-```haml
+```html
 <div id="wrapper">
 
     <div id="user-container">
@@ -54,7 +54,7 @@ Methods
 
 ----
 
-#### `constructor((object) options)` Creates Imap chat instance.
+#### `constructor([object] options, [string] websocketHost)` Creates Imap chat instance.
        
 **_Options_** 
 
@@ -99,7 +99,7 @@ const imap = new ImapChat({
 
 ----
 
-#### `setInstanceData((object) payload)` Sets `ImapChat.instanceData` option.
+#### `setInstanceData([object] payload)` Sets **ImapChat.instanceData** option.
        
 **_Options_** 
 
@@ -115,7 +115,7 @@ imap.setInstanceData({name: 'foo', email: 'foo@bar,com'});
 
 ----
 
-#### `setMessageContainerId((string) id)` Sets `ImapChat.messageContainerId` option.
+#### `setMessageContainerId([string] id)` Sets **ImapChat.messageContainerId** option.
        
 **_Options_** 
 
@@ -131,7 +131,7 @@ imap.setMessageContainerId('#messages'); // #messages using the HTML snippet pro
 
 ---
 
-#### `setSendButtonId((string) id)` Sets `ImapChat.sendButtonId` option.
+#### `setSendButtonId([string] id)` Sets **ImapChat.sendButtonId** option.
        
 **_Options_** 
 
@@ -147,7 +147,7 @@ imap.setSendButtonId('#send-msg'); // #send-msg using the HTML snippet provided 
 
 ---
 
-#### `setInputID((string) id)` Sets `ImapChat.inputID` option.
+#### `setInputID([string] id)` Sets **ImapChat.inputID** option.
        
 **_Options_** 
 
@@ -163,7 +163,7 @@ imap.setInputID('#msg'); // #msg using the HTML snippet provided above.
 
 ----
 
-#### `setOnLocalJoin(callback)` Sets `ImapChat.onLocalJoin` option.
+#### `setOnLocalJoin([function] callback)` Sets **ImapChat.onLocalJoin** option.
        
 **_Options_** 
 
@@ -182,7 +182,7 @@ imap.setOnLocalJoin(onLocalJoin);
 ```
 ---
 
-#### `setOnClientJoin(callback)` Sets `ImapChat.onClientJoin` option.
+#### `setOnClientJoin([function] callback)` Sets **ImapChat.onClientJoin** option.
        
 **_Options_** 
 
@@ -201,7 +201,7 @@ imap.setOnClientJoin(onClientJoin);
 ```
 ---
 
-#### `setSendTPL(callback)` Sets `ImapChat.sendTPL` option.
+#### `setSendTPL([function] callback)` Sets **ImapChat.sendTPL** option.
        
 **_Options_** 
 
@@ -223,7 +223,7 @@ imap.setSendTPL(sent);
 ```
 ---
 
-#### `setReceiveTPL(callback)` Sets `ImapChat.receiveTPL` option.
+#### `setReceiveTPL([function] callback)` Sets **ImapChat.receiveTPL** option.
        
 **_Options_** 
 
@@ -245,7 +245,7 @@ imap.setReceiveTPL(received);
 ```
 ---
 
-#### `setMutateBeforeSend(callback)` Sets `ImapChat.mutateBeforeSend` option.
+#### `setMutateBeforeSend([function] callback)` Sets **ImapChat.mutateBeforeSend** option.
        
 **_Options_** 
 
@@ -266,7 +266,7 @@ imap.setMutateBeforeSend(mutateAddTime);
 ```
 ---
 
-#### `setMutateOnReceive(callback)` Sets `ImapChat.mutateOnReceive` option.
+#### `setMutateOnReceive([function] callback)` Sets **ImapChat.mutateOnReceive** option.
        
 **_Options_** 
 
@@ -287,7 +287,7 @@ imap.setMutateOnReceive(mutateAddEmoji);
 ```
 ---
 
-#### `run(sandbox)` Starts chat client.
+#### `run([boolean] sandbox)` Starts chat client.
        
 **_Options_** 
 
@@ -311,15 +311,3 @@ const imap = new ImapChat({
 });
 imap.run(true);
 ```
-
-
-
-
-
-
-
-
-
-
-
-
