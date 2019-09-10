@@ -9,7 +9,7 @@ A chat system for your website clients. This will send a chat invitation to your
 ```shell script
 php socket.php
 ```
- - Open `index.html` with two(or more) different browser or tabs.
+ - Open `index.html` with two(or more) browser or tabs.
  
 ## Documentation
 HTML code sample (This will be reference the the documentation below)
