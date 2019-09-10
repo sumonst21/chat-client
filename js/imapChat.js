@@ -37,54 +37,66 @@ class ImapChat
    * Sets initial object for current client
    * @Example {name: 'foo', email: 'foo@bar.com'}
    * @param {object} obj
+   * @return ImapChat
    */
   setInstanceData(obj) {
-    this.instanceData = obj
+    this.instanceData = obj;
+    return this;
   }
 
   /**
    * Sets the id of the HTML element where chat message will be rendered.
    * @Example: '#messages'
    * @param {string} messageContainerId
+   * @return ImapChat
    */
   setMessageContainerId(messageContainerId) {
     this.messageContainerId = messageContainerId;
+    return this;
   }
 
   /**
    * Sets the id of the button that on click, $setInputID value will be submitted.
    * @Example '#submite-input'
    * @param {string} sendButtonId
+   * @return ImapChat
    */
   setSendButtonId(sendButtonId) {
     this.sendButtonId = sendButtonId;
+    return this;
   }
 
   /**
    * Sets the id of the input element which value is to be posted on $setSendButtonId click.
    * @Example '#chat-msg-input'
    * @param {string} inputId
+   * @return ImapChat
    */
   setInputID(inputId) {
-    this.inputId = inputId;
+    this.inputID = inputId;
+    return this;
   }
 
   /**
    * Sets a function that is called when a clients joins a chat room.
    *    Callback accepts an argument of payload, which contains current clients information.
    * @param {function} callback
+   * @return ImapChat
    */
   setOnLocalJoin(callback) {
     this.onLocalJoin = callback;
+    return this;
   }
 
   /**
    * Sets a function that is called when a new clients joins an existing chat.
    *    Callback accepts an argument of payload, which contains the new clients information.
    * @param {function} callback
+   * @return ImapChat
    */
   setOnClientJoin(callback) {
     this.onClientJoin = callback;
+    return this;
   }
 
   /**
@@ -92,9 +104,11 @@ class ImapChat
    * Sets a callback that displays content that will be rendered into $messageContainerId.
    *     Callback accepts an argument of payload, which contains the current clients/chat information.
    * @param {function} callback
+   * @return ImapChat
    */
   setSendTPL(callback) {
     this.sendTPL = callback;
+    return this;
   }
 
   /**
@@ -102,27 +116,33 @@ class ImapChat
    * Sets a callback that displays content that will be rendered into $messageContainerId.
    *     Callback accepts an argument of payload, which contains the received clients/chat information.
    * @param {function} callback
+   * @return ImapChat
    */
   setReceiveTPL(callback) {
     this.receiveTPL = callback;
+    return this;
   }
 
   /**
    * Set a mutation for payload before send.
    *     Callback accepts an argument of payload, and must return the(modified) payload.
    * @param {function} callback
+   * @return ImapChat
    */
   setMutateBeforeSend(callback) {
     this.mutateBeforeSend = callback;
+    return this;
   }
 
   /**
    * Set a mutation for payload after receive.
    *     Callback accepts an argument of payload, and must return the(modified) payload.
    * @param {function} callback
+   * @return ImapChat
    */
   setMutateOnReceive(callback) {
     this.mutateOnReceive = callback;
+    return this;
   }
 
   /**
